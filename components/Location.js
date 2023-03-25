@@ -1,66 +1,34 @@
-import { Text, View, StyleSheet } from "react-native";
-// import MapboxGl from "@rnmapbox/maps"
-import MapboxGl from "@rnmapbox/maps"
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import Mapbox from '@rnmapbox/maps';
+import MapView from 'react-native-maps';
+Mapbox.setWellKnownTileServer('Mapbox');
+Mapbox.setAccessToken('pk.eyJ1IjoibWRpbHlhcyIsImEiOiJjbGZncGI2cHgwMTg5M3JvM2dhZ2lrbHFvIn0.HX16gXyT9K-I-uqvqaoJAQ');
 
-const tokenmapbox = "pk.eyJ1IjoibWRpbHlhcyIsImEiOiJjbGZncGI2cHgwMTg5M3JvM2dhZ2lrbHFvIn0.HX16gXyT9K-I-uqvqaoJAQ"
-
-MapboxGl.setAccessToken(tokenmapbox);
-
-// import "./mapbox-gl.css"
-
-export default function Location({ navigation }) {
-
-  
-  const coordinateExample = [41.40338, 2.17403];
+const Location = () => {
   return (
-
-<MapboxGl.MapView style={defaultStyle.sources.map} styleJSON={JSON.stringify(defaultStyle)}>
-
-<View style={{ flex: 1, justifyContent: "center" }}>
-      <Text>Hello, World!</Text>
+    <View style={styles.page}>
+      <View style={styles.container}>
+        <Mapbox.MapView style={styles.map}/>
+      </View>
     </View>
-  
-
-  <MapboxGl.Camera
-  ZoomLavel={15}
-  centerCoordinate={coordinateExample}
-  />
-  <MapboxGl.PointAnnotation 
-  id="point" coordinate={coordinateExample}/>
-
-</MapboxGl.MapView>
   );
 }
 
+export default Location;
 
-
-const defaultStyle = {
-  version: 8,
-  name: 'Land',
-  sources: {
-    map: {
-      type: 'raster',
-      tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
-      tileSize: 256,
-      minzoom: 1,
-      maxzoom: 19,
-    },
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  layers: [
-    {
-      id: 'background',
-      type: 'background',
-      paint: {
-        'background-color': '#f2efea',
-      },
-    },
-    {
-      id: 'map',
-      type: 'raster',
-      source: 'map',
-      paint: {
-        'raster-fade-duration': 100,
-      },
-    },
-  ],
-};
+  container: {
+    height: "100%",
+    width: "100%",
+  },
+  map: {
+    flex: 1
+  }
+});
+// @ant-design/icons-react-native

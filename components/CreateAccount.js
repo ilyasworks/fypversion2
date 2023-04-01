@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Text, View, Image, ImageBackground, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { setEmail, email, password, setPassword, CheckBox } from "react-native";
 import { Alert } from 'react-native';
@@ -20,9 +21,40 @@ const SucessAlert = () => {
 
 
 export default function CreateAccount() {
+
+  const [userCredentials, setUsercredentials] = useState([])
+
+  function handleChange (value, fieldName) {
+    console.log(fieldName,value)
+    setUsercredentials({...userCredentials, [fieldName]: value})
+  }
+
+  console.log({userCredentials})
+
+
+  const registration = async (e) => {
+
+        e.preventDefault()
+
+        let regResponse=await fetch(`http://192.168.18.116:1337/api/auth/local/register`, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(userCredentials)
+            
+        })
+
+        let response = await regResponse.json()
+        console.log({response})
+    
+}
+
+
   return (
     <ImageBackground
-      style={styles.backgroundImage}
+      style={styles.backgroundImage} 
       source={require('../assets/background.png')}>
       <View style={styles.container}>
         <Text style={styles.welcome_Note}> SIGN UP</Text>
@@ -31,35 +63,35 @@ export default function CreateAccount() {
         <TextInput
           style={styles.input}
           placeholder="Muhammad Ilyas"
-          value={email}
-          onChangeText={setEmail}
+          name="name"
+          onChangeText={(txt) => handleChange(txt, "username")}
         />
-
+        
         <Text style={styles.LableText}> Email* </Text>
         <TextInput
           style={styles.input}
           placeholder="ilyas@gmail.com"
-          value={email}
-          onChangeText={setEmail}
+          name="email"
+           onChangeText={(txt) => handleChange(txt, "email")}
         />
-        <Text style={styles.LableText}>Registration Number* </Text>
+        <Text style={styles.LableText}>Occupation* </Text>
         <TextInput
           style={styles.input}
-          placeholder="2019-uobs-203"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="Are you Student or Driver?"
+          name="occupation"
+           onChangeText={(txt) => handleChange(txt, "occupation")}
         />
 
         <Text style={styles.LableText}> Set Password* </Text>
         <TextInput
           style={styles.input}
           placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
+          name="password"
+           onChangeText={(txt) => handleChange(txt, "password")}
           secureTextEntry
         />
         <View style={styles.button_create_account}>
-          <TouchableOpacity style={styles.button} onPress={SucessAlert}>
+          <TouchableOpacity style={styles.button} onPress={registration}>
             <Text style={styles.buttonText}>Create an Account</Text>
           </TouchableOpacity>
         </View>

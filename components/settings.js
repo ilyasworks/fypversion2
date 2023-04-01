@@ -132,7 +132,7 @@ function DeleteBus({ navigation }) {
 function SettingsScreen() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={Setting} />
+      <Stack.Screen name="setting" component={Setting} />
       <Stack.Screen name="Add_Bus" component={AddBus} />
       <Stack.Screen name="Delete_Bus" component={DeleteBus} />
     </Stack.Navigator>

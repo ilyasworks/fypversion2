@@ -1,52 +1,160 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, email, setEmail, password, setPassword , View, Image, ImageBackground } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, email,Alert, setEmail, password, setPassword , View, Image, ImageBackground } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Cookies from 'universal-cookie';
+import {useCookies} from 'react-cookie'
+
 
 
 import CreateAccount from './CreateAccount';
 import StackBusInfo from './GetBusInfo';
+import Location from './Location';
+
+const SucessAlert = () => {
+  Alert.alert(
+    'Sorry!',
+    'you enterd invalid email/password',
+    [
+      {
+        text: 'OK',
+        onPress: () => console.log('OK pressed'),
+      },
+    ],
+    { cancelable: false }
+  );
+};
 
 const Stack = createStackNavigator();
+// async function  checkVech() {
 
+//   await fetch('http://192.168.18.116:1337/api/vehicles')
+//     .then((data) => data.json())
+//     .then((res) => {
+//       console.log(res.data[0].attributes.name)
+//       return res
+//     })
+//     .catch((err) => console.error("error ye h bai ", {err }))
+// }
 function HomeScreen({ navigation }) {
-    return (
-        <ImageBackground
-        style={styles.backgroundImage}
-        source={require('../assets/background.png')}>
-        <View style={styles.container}>
-            <Image style={styles.logo} source={require('../assets/logo.png')} />
-            <Text style={styles.welcome_Note}> WELCOME</Text>
-            <Text style={styles.center_text}> to</Text>
-            <Text style={styles.tag_line}> UOBS GPS</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-            <TouchableOpacity style={styles.button}  onPress={() => navigation.navigate('Details')}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <View>
-              <Text style={styles.forget_password}> Forget Password</Text>
-            </View>
+  const [busList, setBus] = useState([])
+  const [userCreds, setUserCreds] = useState([])
+  const [jwToken, setJwtoken] = useState('')
+  
+  const [cookie, setCookie, removeCookie] = useCookies()
+
+  const cookies = new Cookies();
     
-            <View style={styles.button_create_account}> 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Create_Account')}>
-              <Text style={styles.buttonText}>Create an Account</Text>
-            </TouchableOpacity>
-            </View>
-         
+const logout = () => {
+  const cookies = new Cookies();
+  cookies.remove('jwt', {path: '/'})
+  console.log(cookies.get('jwt'))
+  console.log("Successfully logged out")
+}
+
+  const login = async () => {
+    
+    
+    const userCredentials = JSON.stringify(userCreds)
+    let loginResponse = await fetch('http://192.168.18.116:1337/api/auth/local', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: userCredentials
+    }).catch((err) => console.error("error ye h bai ", {err }))
+    let respFormat = await loginResponse.json()
+    console.log(respFormat.jwt)
+ 
+    cookies.set('jwt', respFormat.jwt, { path: '/' });
+    if(respFormat.jwt) {
+      navigation.navigate('Details')
+    } else {
+     SucessAlert()
+    }
+    setJwtoken(cookies.get('jwt'));
+    setCookie('jwt', jwToken)
+
+    console.log(cookies.get('jwt'));
+   
+  }
+
+  const handleChange = (event) => {
+    console.log("writing")
+    console.log(event.target.name)
+    const name  = event.target.name;
+    const value = event.target.value;
+
+  }
+  function getEmail(tex) {
+    setUserCreds({...userCreds, identifier: tex})
+
+  }
+  function getPassword(pswd) {
+    setUserCreds({...userCreds, password: pswd})
+
+  }
+  
+  console.log("token : ", jwToken);
+
+  	
+    return (
+      <View>
+        {jwToken ?
+        
+        
+       ( <View>
+          <Text>Hello You are already logged In!!</Text>
+          <TouchableOpacity style={styles.button}  onPress={logout}>
+            <Text style={styles.buttonText}>Logout</Text>
+          </TouchableOpacity>
+          <StackBusInfo  />
+        </View> )
+    
+    
+    
+    :  (<ImageBackground
+    style={styles.backgroundImage}
+    source={require('../assets/background.png')}>
+    <View style={styles.container}>
+        <Image style={styles.logo} source={require('../assets/logo.png')} />
+        <Text style={styles.welcome_Note}> WELCOME</Text>
+        <Text style={styles.center_text}> to</Text>
+        <Text style={styles.tag_line}> UOBS GPS</Text>
+        <TextInput
+          name="email"
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={(txt) => getEmail(txt)}
+        />
+        <TextInput
+          style={styles.input}
+          name="password"
+          placeholder="Password"
+          value={password}
+          secureTextEntry
+          onChangeText={(txt) => getPassword(txt)}
+
+        />
+         {/* navigation.navigate('Details') */}
+        <TouchableOpacity style={styles.button}  onPress={login}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.forget_password}> Forget Password</Text>
         </View>
-        </ImageBackground>
-    );
+
+        <View style={styles.button_create_account}> 
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Create_Account')}>
+          <Text style={styles.buttonText}>Create an Account</Text>
+        </TouchableOpacity>
+        </View>
+     
+    </View>
+    </ImageBackground> )}
+      </View>
+    )
 }
 
 function Login() {
@@ -55,7 +163,7 @@ function Login() {
         screenOptions={{
         headerStyle: {
         backgroundColor: 'transparent' }}}>
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Homescreen" component={HomeScreen} />
             <Stack.Screen name="Details" component={StackBusInfo} />
             <Stack.Screen name="Create_Account" component={CreateAccount} />
         </Stack.Navigator>

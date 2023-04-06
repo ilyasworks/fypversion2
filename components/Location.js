@@ -14,7 +14,7 @@ MapboxGL.setWellKnownTileServer('Mapbox');
 MapboxGL.setAccessToken("pk.eyJ1IjoibWRpbHlhcyIsImEiOiJjbGZncGI2cHgwMTg5M3JvM2dhZ2lrbHFvIn0.HX16gXyT9K-I-uqvqaoJAQ");
 
 const Location = () => {
-  const [coordinates] = useState([75.62017484522926,35.28966423502456]);
+  const [coordinates] = useState([75.66199414511411,35.286531323821706]);
   const [route, setRoute] = useState({
     type: "FeatureCollection",
     features: [
@@ -72,7 +72,7 @@ const Location = () => {
     <View style={styles.page}>
       <View style={styles.container}>
         <MapboxGL.MapView style={styles.map}>
-          <MapboxGL.Camera zoomLevel={16} centerCoordinate={coordinates} />
+          <MapboxGL.Camera zoomLevel={14} centerCoordinate={coordinates} />
           <MapboxGL.PointAnnotation coordinate={coordinates} />
           <View>{renderAnnotations()}</View>
           <MapboxGL.MarkerView id={"marker"} coordinate={[72, 23]}>
@@ -86,7 +86,6 @@ const Location = () => {
                   style={{
                     width: 30,
                     height: 40,
-                    backgroundColor: "",
                     resizeMode: "cover",
                   }}
                 />
